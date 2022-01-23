@@ -1,11 +1,17 @@
 package com.yash.perify.Tasks;
 
+import android.Manifest;
 import android.content.Context;
+import android.content.pm.PackageManager;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
+
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.ServerSocket;
@@ -19,7 +25,8 @@ public class MicServer {
     public static Context applicationContext;
     public static  String wifiServiceType;
 
-    ServerSocket micServerSocket;
+    private ServerSocket micServerSocket;
+    private static AudioProcesser audio;
 
     public static String SERVER_IP = "";
     public static int SERVER_PORT = 8080;
@@ -33,7 +40,7 @@ public class MicServer {
             e.printStackTrace();
         }
     }
-    public static void setContext( Context context  , String service){
+    public static void setContext( Context context  , String service ){
         applicationContext = context;
         wifiServiceType = service;
     }
@@ -66,10 +73,13 @@ public class MicServer {
 
     public void RestartServer( TextView view )
     {
+        audio = new AudioProcesser( applicationContext );
+        //audio.recordMic();
         new Thread(new Runnable() {
             @Override
             public void run() {
                 try {
+
                     Log.println(Log.DEBUG, "Yash", getLocalIpAddress());
                     UpdateServerInfo( view );
                     InetSocketAddress addr = new InetSocketAddress(SERVER_IP, SERVER_PORT);
