@@ -22,6 +22,7 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.yash.perify.R;
+import com.yash.perify.Tasks.AudioProcesser;
 import com.yash.perify.Tasks.MicServer;
 import com.yash.perify.databinding.FragmentHomeBinding;
 
@@ -66,6 +67,14 @@ public class HomeFragment extends Fragment {
                     new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
                     201);
         }
+
+        if (ContextCompat.checkSelfPermission( getActivity(),
+                Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+
+            ActivityCompat.requestPermissions(getActivity(),
+                    new String[]{Manifest.permission.CAMERA},
+                    202);
+        }
         //final TextView textView = binding.textHome;
 
         IPRefreshButton = root.findViewById(R.id.RefreshIP);
@@ -76,7 +85,7 @@ public class HomeFragment extends Fragment {
                 Log.println(Log.DEBUG , "Yash" , "Trying to Connect");
 
                 //micServer.UpdateServerInfo( IPTextView );
-                micServer = new MicServer( IPTextView );
+                micServer = new MicServer( IPTextView  , root );
                 micServer.RestartServer( IPTextView );
             }
         });

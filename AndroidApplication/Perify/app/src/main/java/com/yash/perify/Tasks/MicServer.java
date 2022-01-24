@@ -7,10 +7,13 @@ import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+
+import com.yash.perify.R;
 
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
@@ -26,19 +29,25 @@ public class MicServer {
     public static  String wifiServiceType;
 
     private ServerSocket micServerSocket;
-    private static AudioProcesser audio;
+    private static AudioProcesser audioProcesser;
 
     public static String SERVER_IP = "";
     public static int SERVER_PORT = 8080;
 
 
-    public MicServer( TextView IPText ) {
+    public MicServer( TextView IPText  , View root) {
         try {
             SERVER_IP = getLocalIpAddress();
             SERVER_PORT = 8080;
         }catch( Exception e ){
             e.printStackTrace();
         }
+
+
+        Button startrec =  root.findViewById(R.id.StartRecordButton);
+        Button stoprec = root.findViewById(R.id.StopRecordButton);
+        Button play =  root.findViewById(R.id.playButton);
+        audioProcesser = new AudioProcesser( applicationContext, startrec, stoprec, play );
     }
     public static void setContext( Context context  , String service ){
         applicationContext = context;
@@ -73,8 +82,6 @@ public class MicServer {
 
     public void RestartServer( TextView view )
     {
-        audio = new AudioProcesser( applicationContext );
-        //audio.recordMic();
         new Thread(new Runnable() {
             @Override
             public void run() {
